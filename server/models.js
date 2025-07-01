@@ -38,10 +38,24 @@ const friendRequestSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+// Post Schema
+const postSchema = new mongoose.Schema({
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  content: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  comments: [{
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    content: { type: String },
+    createdAt: { type: Date, default: Date.now }
+  }]
+});
+
 // Create models
 const User = mongoose.model('User', userSchema);
 const Chat = mongoose.model('Chat', chatSchema);
 const Message = mongoose.model('Message', messageSchema);
 const FriendRequest = mongoose.model('FriendRequest', friendRequestSchema);
+const Post = mongoose.model('Post', postSchema);
 
-module.exports = { User, Chat, Message, FriendRequest };
+module.exports = { User, Chat, Message, FriendRequest, Post };

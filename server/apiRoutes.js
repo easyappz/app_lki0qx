@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User, Message, FriendRequest, Chat } = require('./models');
+const { User, Message, FriendRequest, Chat, Post } = require('./models');
 
 const router = express.Router();
 
@@ -56,6 +56,37 @@ router.post('/messages/:chatId', authenticateToken, async (req, res) => {
     res.status(201).json(newMessage);
   } catch (error) {
     res.status(500).json({ message: 'Error sending message', error: error.message });
+  }
+});
+
+// Get posts from friends
+router.get('/posts', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    const posts = await Post.find({ author: { $in: [...user.friends, req.user.userId] } })
+      .populate('author', 'username avatar')
+      .populate('comments.author', 'username avatar')
+      .sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching posts', error: error.message });
+  }
+});
+
+// Create a new post
+router.post('/posts', authenticateToken, async (req, res) => {
+  try {
+    const { content } = req.body;
+    const newPost = new Post({
+      author: req.user.userId,
+      content,
+    });
+    await newPost.save();
+    const populatedPost = await Post.findById(newPost._id)
+      .populate('author', 'username avatar');
+    res.status(201).json(populatedPost);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating post', error: error.message });
   }
 });
 
