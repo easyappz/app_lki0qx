@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider, CssBaseline, Container, Box } from '@mui/material';
 import ErrorBoundary from './ErrorBoundary';
 import theme from './theme';
 import Header from './components/Header';
@@ -25,17 +25,21 @@ function App() {
           <Router>
             <div className="App">
               <Header />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/edit-profile" element={<EditProfile />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/friends" element={<Friends />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/settings" element={<Settings />} />
-              </Routes>
+              <Container maxWidth="lg">
+                <Box sx={{ mt: 4, mb: 4 }}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/edit-profile" element={<EditProfile />} />
+                    <Route path="/search" element={<Search />} />
+                    <Route path="/friends" element={<Friends />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Routes>
+                </Box>
+              </Container>
             </div>
           </Router>
         </AuthProvider>
