@@ -14,7 +14,9 @@ const userSchema = new mongoose.Schema({
   friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   emailNotifications: { type: Boolean, default: true },
   darkMode: { type: Boolean, default: false },
-  twoFactorAuth: { type: Boolean, default: false }
+  twoFactorAuth: { type: Boolean, default: false },
+  loginAttempts: { type: Number, default: 0 },
+  lockUntil: { type: Number }
 });
 
 // ... (keep other schemas unchanged)
