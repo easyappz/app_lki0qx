@@ -14,10 +14,17 @@ const userSchema = new mongoose.Schema({
   friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
+// Chat Schema
+const chatSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  createdAt: { type: Date, default: Date.now },
+});
+
 // Message Schema
 const messageSchema = new mongoose.Schema({
+  chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat', required: true },
   sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   content: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
   read: { type: Boolean, default: false },
@@ -33,7 +40,8 @@ const friendRequestSchema = new mongoose.Schema({
 
 // Create models
 const User = mongoose.model('User', userSchema);
+const Chat = mongoose.model('Chat', chatSchema);
 const Message = mongoose.model('Message', messageSchema);
 const FriendRequest = mongoose.model('FriendRequest', friendRequestSchema);
 
-module.exports = { User, Message, FriendRequest };
+module.exports = { User, Chat, Message, FriendRequest };

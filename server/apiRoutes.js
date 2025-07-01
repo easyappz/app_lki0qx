@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User, Message, FriendRequest } = require('./models');
+const { User, Message, FriendRequest, Chat } = require('./models');
 
 const router = express.Router();
 
@@ -20,31 +20,42 @@ const authenticateToken = (req, res, next) => {
 
 // ... (keep existing routes)
 
-// Get friend requests
-router.get('/friends/requests', authenticateToken, async (req, res) => {
+// Get all chats for the current user
+router.get('/chats', authenticateToken, async (req, res) => {
   try {
-    const friendRequests = await FriendRequest.find({ receiver: req.user.userId, status: 'pending' })
-      .populate('sender', 'username email');
-    res.json(friendRequests);
+    const chats = await Chat.find({ participants: req.user.userId })
+      .populate('participants', 'username');
+    res.json(chats);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching friend requests', error: error.message });
+    res.status(500).json({ message: 'Error fetching chats', error: error.message });
   }
 });
 
-// Search users
-router.get('/users/search', authenticateToken, async (req, res) => {
+// Get messages for a specific chat
+router.get('/messages/:chatId', authenticateToken, async (req, res) => {
   try {
-    const searchTerm = req.query.q;
-    const users = await User.find({
-      $or: [
-        { username: { $regex: searchTerm, $options: 'i' } },
-        { email: { $regex: searchTerm, $options: 'i' } }
-      ],
-      _id: { $ne: req.user.userId }
-    }).select('username email');
-    res.json(users);
+    const messages = await Message.find({ chat: req.params.chatId })
+      .populate('sender', 'username')
+      .sort({ timestamp: 1 });
+    res.json(messages);
   } catch (error) {
-    res.status(500).json({ message: 'Error searching users', error: error.message });
+    res.status(500).json({ message: 'Error fetching messages', error: error.message });
+  }
+});
+
+// Send a new message
+router.post('/messages/:chatId', authenticateToken, async (req, res) => {
+  try {
+    const { content } = req.body;
+    const newMessage = new Message({
+      chat: req.params.chatId,
+      sender: req.user.userId,
+      content,
+    });
+    await newMessage.save();
+    res.status(201).json(newMessage);
+  } catch (error) {
+    res.status(500).json({ message: 'Error sending message', error: error.message });
   }
 });
 
