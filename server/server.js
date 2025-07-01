@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const apiRoutes = require('./apiRoutes');
+const { User, Message, FriendRequest } = require('./models');
 
 // Для работы с express
 const app = express();
@@ -9,14 +10,11 @@ const app = express();
 app.use('/api', apiRoutes);
 
 /**
- * Пример создания и записи данных в базу данных
+ * Подключение к базе данных MongoDB
  */
 const MONGO_URI = process.env.MONGO_URI;
 
-const mongoDb = mongoose.createConnection(MONGO_URI);
-
-mongoDb
-  .asPromise()
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('MongoDB connected');
   })
@@ -24,14 +22,10 @@ mongoDb
     console.error('MongoDB connection error:', err);
   });
 
-// const MongoTestSchema = new mongoose.Schema({
-//   value: { type: String, required: true },
-// });
+// Определение порта
+const PORT = process.env.PORT || 3000;
 
-// const MongoModelTest = global.mongoDb.model('Test', MongoTestSchema);
-
-// const newTest = new MongoModelTest({
-//   value: 'test-value',
-// });
-
-// newTest.save();
+// Запуск сервера
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
