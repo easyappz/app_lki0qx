@@ -1,19 +1,42 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
 import ErrorBoundary from './ErrorBoundary';
+import theme from './theme';
+import Header from './components/Header';
+import Home from './components/Home';
+import Register from './components/Register';
+import Login from './components/Login';
+import Profile from './components/Profile';
+import EditProfile from './components/EditProfile';
+import Search from './components/Search';
+import Friends from './components/Friends';
+import Messages from './components/Messages';
+import Settings from './components/Settings';
 import './App.css';
 
 function App() {
   return (
     <ErrorBoundary>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Шаблон React успешно развернут, <br />
-            Ждите обновлений от AI :)
-          </p>
-        </header>
-      </div>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <div className="App">
+            <Header />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/edit-profile" element={<EditProfile />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/friends" element={<Friends />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </div>
+        </Router>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
